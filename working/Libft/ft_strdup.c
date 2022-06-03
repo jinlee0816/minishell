@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/04 15:59:45 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/03 15:30:13 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/03 17:58:34 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,8 @@ char	*ft_strdup(const char *src)
 	output = (char *)malloc(len + 1);
 	if (!output)
 		return (NULL);
-	while (src[i])
-	{
+	while (src[i++])
 		output[i] = src[i];
-		i++;
-	}
 	output[i] = 0;
 	return (output);
 }

@@ -1,6 +1,12 @@
 NAME =	minishell
 
-SRCS =	main.c
+SRCS_DIR = srcs/
+
+SRCS =	$(SRCS_DIR)main.c \
+			$(SRCS_DIR)utils.c \
+			$(SRCS_DIR)utils_signal.c \
+			$(SRCS_DIR)cd.c \
+			$(SRCS_DIR)parser.c
 
 OBJS = $(SRCS:.c=.o)
 
