@@ -6,42 +6,42 @@
 #    By: younjkim <younjkim@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/22 16:42:11 by younjkim          #+#    #+#              #
-#    Updated: 2022/05/22 19:19:15 by younjkim         ###   ########.fr        #
+#    Updated: 2022/06/07 18:40:02 by younjkim         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+CC = gcc
+CFLAGS = -Wall -Werror -Wextra
+RM = rm -rf
+
+SRC_DIR = srcs/
+OBJ_DIR = objs/
+LIB_DIR = libft/
+LDFLAGS = -L/Users/younjkim/.brew/opt/readline/lib
+CPPFLAGS = -I/Users/younjkim/.brew/opt/readline/include
+
+INCS = -Iinc/ -I$(LIB_DIR) $(CPPFLAGS)
+NAME = minishell
+
 SRCS =	main.c \
 		free.c \
-		signal/signal_util.c \
+		input.c \
+		line.c \
+		vars.c \
+		redir_exec.c \
 
 OBJS = ${SRCS:.c=.o}
 
-NAME = minishell
+all: $(NAME)
 
-HEADER = minishell.h
-
-CC = clang
-
-CFLAGS = -Wall -Werror -Wextra 
-RM = rm -f
-
-.c.o:
-	${CC} -c ${CFLAGS} -I -L./libft/ -o $@ $<
-
-$(NAME):    ${OBJS}
-		make -C libft
-		${CC} ${CFLAGS} ${OBJS} -I -L./libft/ -lreadline -lm ./libft/libft.a -o ${NAME}
-
-all:	${NAME}
-
+$(NAME): $(addprefix $(OBJ_DIR),$(OBJS))
+	$(MAKE) -C $(LIB_DIR)
+	$(CC) $(INCS) $^ -o $(NAME) $(LDFLAGS) -lreadline -L$(LIB_DIR) -lft
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< $(INCS) -o $@
 clean:
-	make clean -C libft
-	${RM} ${OBJS}
-
+	$(RM) $(OBJ_DIR)
 fclean: clean
-	make fclean -C libft
-	${RM} ${NAME}
-
-re:	 fclean all
-
-.PHONY: all clean fclean re
+	$(RM) $(NAME)
+re: fclean all
