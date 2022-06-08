@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 12:53:17 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/03 18:10:33 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:33:57 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,15 @@ static void	change_dir(char *path, t_data *param)
 
 // char **export_command : 다시 짜야함
 
-void		cd_command(t_data *param)
+void	cd_command(t_data *param)
 {
-	char *path;
+	char	*path;
 
 	errno = 0;
 	if (param->argc <= 2)
 	{
-		if (!param->argv[1] || !ft_strncmp(param->argv[1], "--", 3) ||
-			!ft_strncmp(param->argv[1], "~", 2))
+		if (!param->argv[1] || !ft_strncmp(param->argv[1], "--", 3)
+			|| !ft_strncmp(param->argv[1], "~", 2))
 			path = get_env(param->envp, "HOME");
 		else if (!ft_strncmp(param->argv[1], "-", 2))
 			path = get_env(param->envp, "OLDPWD");
@@ -56,7 +56,7 @@ void		cd_command(t_data *param)
 			path = param->argv[1];
 		change_dir(path, param);
 		if (errno > 0)
-			ft_putstr_fd("error\n",2);
+			ft_putstr_fd("error\n", 2);
 	}
 	else
 		ft_putstr_fd("bash: cd: too many arguments\n", 2);

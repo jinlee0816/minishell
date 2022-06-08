@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/25 11:36:09 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/03 18:06:05 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:41:39 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,17 @@ char	*get_env(char **envp, char *env)
 		tmp = 0;
 	free(env);
 	return (tmp);
+}
+
+int	check_quotes(char **str, int *i, char c)
+{
+	(*i)++;
+	while ((*str)[*i] && ((*str)[*i] != c))
+		(*i)++;
+	if (!(*str)[*i])
+	{
+		ft_putstr_fd("Non finished quotes\n", 2);
+		return (1);
+	}
+	return (0);
 }

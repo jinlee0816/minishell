@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gaekim <gaekim@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/24 22:04:43 by kycho             #+#    #+#             */
-/*   Updated: 2021/02/08 01:39:13 by gaekim           ###   ########.fr       */
+/*   Updated: 2022/06/08 15:45:08 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static ssize_t	read_to_buffer(int fd, t_gnl_material *material)
 {
-	ssize_t readn;
+	ssize_t	readn;
 
 	readn = read(fd, material->buffer, BUFFER_SIZE);
 	if (readn == -1 || readn == 0)
@@ -25,13 +25,14 @@ static ssize_t	read_to_buffer(int fd, t_gnl_material *material)
 	return (readn);
 }
 
-static int		expand_line_size(char **line, size_t *line_size)
+static int	expand_line_size(char **line, size_t *line_size)
 {
-	char *new_line;
+	char	*new_line;
 
 	if (*line_size == 0 && *line == NULL)
 	{
-		if (!(*line = ft_calloc(BUFFER_SIZE + 1, sizeof(char))))
+		*line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		if (!(*line))
 			return (-1);
 		*line_size = BUFFER_SIZE + 1;
 	}
@@ -48,7 +49,7 @@ static int		expand_line_size(char **line, size_t *line_size)
 	return (1);
 }
 
-static int		copy_buffer(char **line, t_gnl_material *material)
+static int	copy_buffer(char **line, t_gnl_material *material)
 {
 	char	ch;
 	size_t	line_idx;
@@ -73,7 +74,7 @@ static int		copy_buffer(char **line, t_gnl_material *material)
 	return (1);
 }
 
-int				get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line)
 {
 	static t_gnl_material	material[FD_NUMBER];
 	size_t					line_size;

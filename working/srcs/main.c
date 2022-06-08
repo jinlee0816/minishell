@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 18:02:24 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/03 18:05:25 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:48:36 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,15 @@ static void	init_param(t_data **param, char **envp, int *ret_len)
 	(*param)->envp = copy_env(envp, 0);
 	(*param)->export = (char **)ft_calloc(sizeof(char *), 1);
 	(*param)->str = 0;
+	(*param)->str = NULL;
 	ret_len[0] = 1;
 }
 
 static char	*signal_readline(char *line, char **envp)
 {
-	(void)envp;
 	char	tmp[100];
 
+	(void)envp;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, sigquit_handler);
 	put_prompt(envp);
@@ -81,11 +82,10 @@ int	main(int argc, char **argv, char **envp)
 		return (ft_putstr_fd("Error : Wrong number of arguments!\n", 2), 1);
 	print_logo();
 	init_param(&param, envp, ret_len);
-	param->str = NULL;
 	while (1)
 	{
 		param->str = signal_readline(param->str, envp);
-		// parse(param);
+		parse(param);
 	}
 	return (0);
 }

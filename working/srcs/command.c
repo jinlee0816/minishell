@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:08:01 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/03 18:10:56 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:54:19 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 static void	env_command(t_data *param, int fd)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (param->argc != 1)
 	{
 		ft_putstrs_fd("env: ‘", param->argv[1],
-		"’: Permission denied\n", 2);
+			"’: Permission denied\n", 2);
 		return ;
 	}
 	while (param->envp[i])
@@ -29,23 +29,29 @@ static void	env_command(t_data *param, int fd)
 
 static void	echo_command(t_data *param, int fd)
 {
-	int i;
-    int nl;
+	int	i;
+	int	nl;
 
-    i = 0;
-    if (param->argc > 1 && !ft_memcmp(param->argv[1], "-n", 3))
-        i = 1;
-    nl = i;
+	i = 0;
+	if (param->argc > 1 && !ft_memcmp(param->argv[1], "-n", 3))
+		i = 1;
+	nl = i;
 	while (++i < param->argc)
 		ft_putstr_fd(param->argv[i], fd);
 	if (nl == 1)
 		write(fd, "\n", 1);
 }
 
+static void	zsh_error(void)
+{
+	ft_putstr_fd("zsh: Permission denied\n", 2);
+	return ;
+}
+
 static int	check_command_sub(int fd, t_data *param)
 {
-	char *path;
-	char cwd[4097];
+	char	*path;
+	char	cwd[4097];
 
 	path = 0;
 	if (!ft_memcmp(param->argv[0], "echo", 5))
@@ -65,27 +71,21 @@ static int	check_command_sub(int fd, t_data *param)
 	return (0);
 }
 
-static void	zsh_error()
-{
-	ft_putstr_fd("zsh: Permission denied\n", 2);
-	return ;
-}
-
-int		check_command(int fd, t_data *param)
+int	check_command(int fd, t_data *param)
 {
 	if (!check_command_sub(fd, param))
 		return (1);
 	else if (!ft_memcmp(param->argv[0], "env", 4))
 		env_command(param, fd);
-	else if (!ft_memcmp(param->argv[0], "./", 2) ||
-			!ft_memcmp(param->argv[0], "../", 3) ||
-			!ft_memcmp(param->argv[0], "/", 1))
+	else if (!ft_memcmp(param->argv[0], "./", 2)
+		|| !ft_memcmp(param->argv[0], "../", 3)
+		|| !ft_memcmp(param->argv[0], "/", 1))
 		zsh_error();
-	else if (!ft_memcmp(param->argv[0], "export", 7) ||
-			!ft_memcmp(param->argv[0], "unset", 6))
+	else if (!ft_memcmp(param->argv[0], "export", 7)
+		|| !ft_memcmp(param->argv[0], "unset", 6))
 		param->envp = multiple_env(param, fd);
-	else if (!ft_memcmp(param->argv[0], "exit", 5) ||
-			!ft_memcmp(param->argv[0], "q", 2))
+	else if (!ft_memcmp(param->argv[0], "exit", 5)
+		|| !ft_memcmp(param->argv[0], "q", 2))
 		exit_command(param);
 	else
 		return (0);

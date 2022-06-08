@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/03 17:01:04 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/05/22 12:48:04 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:45:22 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-typedef struct	s_gnl_material
+typedef struct s_gnl_material
 {
 	int			value_to_print_exist;
 	char		buffer[BUFFER_SIZE];
