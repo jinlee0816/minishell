@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/03 17:01:04 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/08 15:45:22 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:48:54 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int					ft_isascii(int c);
 int					ft_isprint(int c);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
-
+int					ft_isspace(char c);
 void				*ft_calloc(size_t nmemb, size_t size);
 char				*ft_strdup(const char *str);
 

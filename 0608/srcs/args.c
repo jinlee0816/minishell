@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 11:32:16 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/08 20:33:44 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:49:36 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	count_args(char *str)
 	return (n);
 }
 
-static int	ft_strlen_arg(char *str)
+int	ft_strlen_arg(char *str)
 {
 	int	i;
 
@@ -57,7 +57,7 @@ static int	ft_strlen_arg(char *str)
 	return (i);
 }
 
-static int	ft_strlen_arg_token(char *str, char c)
+int	ft_strlen_arg_token(char *str, char c)
 {
 	int	i;
 
@@ -90,7 +90,7 @@ void	set_args(char **argv, char *str, int argc)
 		skip_spaces(&str);
 		len = ft_strlen_arg(str);
 		argv[i] = ft_strldup(str, len);
-		rm_token(&(argv[i]));
+		// rm_token(&(argv[i]));
 		i++;
 		str += len;
 		skip_spaces(&str);

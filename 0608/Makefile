@@ -3,7 +3,13 @@ NAME =	minishell
 SRCS_DIR = srcs/
 
 SRCS =	$(SRCS_DIR)main.c \
+			$(SRCS_DIR)args.c \
+			$(SRCS_DIR)check_env.c \
+			$(SRCS_DIR)check_quotes.c \
+			$(SRCS_DIR)command_or_pipe.c \
+			$(SRCS_DIR)command.c \
 			$(SRCS_DIR)utils.c \
+			$(SRCS_DIR)utils2.c \
 			$(SRCS_DIR)utils_signal.c \
 			$(SRCS_DIR)cd.c \
 			$(SRCS_DIR)parser.c
@@ -33,7 +39,6 @@ complib:
 
 %.o:		%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
-	printf "$(GREEN)██"
 
 fclean: clean
 	$(MAKE) -C $(LIBFTDIR) fclean

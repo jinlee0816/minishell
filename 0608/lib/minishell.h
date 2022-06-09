@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 18:21:56 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/08 21:26:27 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:50:22 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,15 @@ typedef struct s_data{
 int		count_args(char *str);
 int		is_token(char c);
 void	set_args(char **argv, char *str, int argc);
+int		ft_strlen_arg(char *str);
+int		ft_strlen_arg_token(char *str, char c);
 
 /* cd.c */
 void	cd_command(t_data *param);
 
 /* check_env.c */
 int		check_env(char *str, t_data *param);
+void	free_strings(char *str1, char *str2, char *str3, char *str4);
 
 /* check_quotes.c */
 int		check_quotes(char *str);

@@ -6,7 +6,7 @@
 /*   By: jinwolee <jinwolee@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 20:50:14 by jinwolee          #+#    #+#             */
-/*   Updated: 2022/06/08 21:24:43 by jinwolee         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:50:05 by jinwolee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	change_env(int i, int braces, char *str, t_data *param)
 	return (len);
 }
 
-static void	free_strings(char *str1, char *str2, char *str3, char *str4)
+void	free_strings(char *str1, char *str2, char *str3, char *str4)
 {
 	free(str1);
 	free(str2);
