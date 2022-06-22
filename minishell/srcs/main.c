@@ -5,104 +5,138 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: younjkim <younjkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/22 16:28:10 by younjkim          #+#    #+#             */
-/*   Updated: 2022/06/07 18:41:52 by younjkim         ###   ########.fr       */
+/*   Created: 2022/06/09 14:16:46 by younjkim          #+#    #+#             */
+/*   Updated: 2022/06/21 19:40:51 by younjkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-t_m_vars	*g_vars;
-
-void	print_logo(void)
+void	ft_sig_handler(int sign_num)
 {
-	printf("\033[1;35m\
-	 __  __ _       _     _          _ _ \n\
-	|  \\/  (_)_ __ (_)___| |__   ___| | |\n\
-	| |\\/| | | '_ \\| / __| '_ \\ / _ \\ | |\n\
-	| |  | | | | | | \\__ \\ | | |  __/ | |\n\
-	|_|  |_|_|_| |_|_|___/_| |_|\\___|_|_|\n\033[0m \
-	\t\t\tby younjkim & jinwolee\n\n");
-}
-
-void	sig_handle(int signo, siginfo_t *info, void *other)
-{
-	(void)info;
-	(void)other;
-	if (signo == SIGINT)
+	if (sign_num == SIGINT && g_glob.pid)
 	{
-		g_vars->exit_status = EXIT_SIGINT;
-		if (g_vars->fork != 0)
-			exit(EXIT_SIGINT);
 		printf("\n");
-		if (g_vars->status == 0)
-		{
-			rl_on_new_line();
-			rl_replace_line("", 0);
-			rl_redisplay();
-		}
-		return ;
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		g_glob.error = 1;
 	}
-}
-
-void	init_shell(struct termios term, int argc, char **argv)
-{
-	struct sigaction	sa;
-
-	(void)argc;
-	(void)argv;
-	tcgetattr(STDIN_FILENO, &term);
-	sa.sa_sigaction = sig_handle;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGQUIT, &sa, NULL);
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(STDIN_FILENO, 0, &term);
-	g_vars->fork = 0;
-	g_vars->dup_fd[0] = dup(STDIN_FILENO);
-	g_vars->dup_fd[1] = dup(STDOUT_FILENO);
-	print_logo();
-}
-
-void	exit_shell(void)
-{
-	int	fork;
-
-	fork = g_vars->fork;
-	rl_clear_history();
-	close(g_vars->dup_fd[0]);
-	close(g_vars->dup_fd[1]);
-	if (!fork)
-		ft_putendl_fd("exit", STDERR_FILENO);
-	exit(EXIT_SUCCESS);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	struct termios	term;
-	char			*line;
-	char			*prompt;
-
-	ft_env_init(envp);
-	if (argc != 1)
-		return (ft_putstr_fd("Error : Wrong number of arguments!\n", 2), 1);
-	init_shell(term, argc, argv);
-	while (1)
+	else if (sign_num == SIGINT && !g_glob.pid)
 	{
-		prompt = getprompt();
-		g_vars->status = 0;
-		line = readline(prompt);
-		free(prompt);
-		if (!line)
-			exit_shell();
-		if (line[0] != '\0')
+		printf("\r");
+		printf("\n");
+		rl_on_new_line();
+		g_glob.error = 130;
+	}
+	else if (sign_num == SIGQUIT && !g_glob.pid)
+	{
+		printf("Quit: 3\n");
+		g_glob.error = 131;
+	}
+}
+
+static int	ft_dup_env(char **env)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	j = 0;
+	while (env[++i])
+		if (ft_strncmp(env[i], "OLDPWD=", 7))
+			j++;
+	g_glob.g_env = (char **)malloc((j + 1) * sizeof(char *));
+	if (!g_glob.g_env)
+		return (1);
+	g_glob.g_env[j] = NULL;
+	i = -1;
+	j = 0;
+	while (env[++i])
+	{
+		if (ft_strncmp(env[i], "OLDPWD=", 7))
 		{
-			add_history(line);
-			g_vars->status = 1;
-			g_vars->exit_status = shell_line(line);
-			if (g_vars->exit_status == EXIT_EXIT)
-				exit_shell();
+			g_glob.g_env[j] = ft_strdup(env[i]);
+			j++;
 		}
 	}
+	return (0);
+}
+
+static int	ft_check(const char *s, int *i, int *k)
+{
+	while (s[*i])
+	{
+		if (s[*i] && (s[*i] == '<' || s[*i] == '>'))
+			*k = *k + 1;
+		else
+		{
+			*i = *i - 1;
+			break ;
+		}
+		if (*k == 3)
+		{
+			printf("minishell: parse error\n");
+			return (1);
+		}
+		*i = *i + 1;
+	}
+	return (0);
+}
+
+static int	ft_redierror(const char *s)
+{
+	int		i;
+	int		k;
+	char	c;
+
+	i = -1;
+	while (s && s[++i])
+	{
+		if (s[i] && (s[i] == '\'' || s[i] == '\"'))
+		{
+			c = s[i];
+			i++;
+			while (s[i] && s[i] != c)
+				i++;
+		}
+		if (s[i] && (s[i] == '<' || s[i] == '>'))
+		{
+			k = 0;
+			if (ft_check(s, (int *)&i, (int *)&k) == 1)
+				return (1);
+		}
+		if (s[i] == 0)
+			break ;
+	}
+	return (0);
+}
+
+int	main(int argc, char **argv, char **env)
+{
+	t_shell	shell;
+
+	ft_dup_env(env);
+	g_glob.pid = 1;
+	rl_catch_signals = 0;
+	signal(SIGINT, ft_sig_handler);
+	signal(SIGQUIT, ft_sig_handler);
+	ft_memset(&shell, 0, sizeof(shell));
+	while (1 || argv || argc)
+	{
+		shell.line = readline(BOLD "LoSBa Shados $> " CLOSE);
+		add_history(shell.line);
+		shell.rediexists = 1;
+		if (ft_redierror(shell.line) == 0)
+		{
+			if (!shell.line)
+				ft_exit_p(ft_dup_to_double("exit"));
+			unlink("heredoc.txt");
+			ft_fork(&shell, -1, 0);
+			g_glob.pid = 1;
+		}
+		free(shell.line);
+	}
+	ft_double_free(g_glob.g_env);
+	return (0);
 }

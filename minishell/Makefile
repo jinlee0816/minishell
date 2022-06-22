@@ -5,43 +5,72 @@
 #                                                     +:+ +:+         +:+      #
 #    By: younjkim <younjkim@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/05/22 16:42:11 by younjkim          #+#    #+#              #
-#    Updated: 2022/06/07 18:40:02 by younjkim         ###   ########.fr        #
+#    Created: 2022/06/22 09:47:36 by younjkim          #+#    #+#              #
+#    Updated: 2022/06/22 09:47:40 by younjkim         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
-CFLAGS = -Wall -Werror -Wextra
-RM = rm -rf
+NAME	= minishell
+CC		= gcc
+RM		= rm -rf
+CFLAGS	= -Wall -Wextra -Werror -I/Users/$(USER)/.brew/opt/readline/include -ggdb3 #-fsanitize=address -g3 
+LDFLAGS	= -lreadline -L /Users/$(USER)/.brew/opt/readline/lib 
+GREEN	= \033[0;32m
+RED		= \033[0;31m
+RESET	= \033[0m
 
-SRC_DIR = srcs/
-OBJ_DIR = objs/
-LIB_DIR = libft/
-LDFLAGS = -L/Users/younjkim/.brew/opt/readline/lib
-CPPFLAGS = -I/Users/younjkim/.brew/opt/readline/include
+FUNC	= srcs/main \
+		  srcs/builtins/pwd \
+		  srcs/builtins/echo \
+		  srcs/builtins/env \
+		  srcs/builtins/cd \
+		  srcs/builtins/export/export \
+		  srcs/builtins/export/additions \
+		  srcs/builtins/export/additions2 \
+		  srcs/builtins/unset \
+		  srcs/builtins/exit \
+		  srcs/utils/split/split \
+		  srcs/utils/split/split_pipe \
+		  srcs/utils/split/split_utils \
+		  srcs/utils/split/quote/quote_control \
+		  srcs/utils/split/quote/additions \
+		  srcs/utils/expand \
+		  srcs/utils/free  \
+		  srcs/utils/ft_fork \
+		  srcs/utils/ft_get_path \
+		  srcs/utils/ft_builtins \
+		  srcs/utils/redirections/ft_redirections \
+		  srcs/utils/redirections/ft_helpredis \
+		  srcs/utils/redirections/additions \
+		  srcs/utils/dup_to
 
-INCS = -Iinc/ -I$(LIB_DIR) $(CPPFLAGS)
-NAME = minishell
+SRC		= $(addsuffix .c, $(FUNC))
+OBJ		= $(addsuffix .o, $(FUNC))
 
-SRCS =	main.c \
-		free.c \
-		input.c \
-		line.c \
-		vars.c \
-		redir_exec.c \
+all : $(NAME)
 
-OBJS = ${SRCS:.c=.o}
+.c.o	: $(SRC)
+	@$(CC) $(CFLAGS) -c $^ -o $@ 
 
-all: $(NAME)
+$(NAME) : $(OBJ)
+	@$(MAKE) -s -C srcs/libft
+	@mv srcs/libft/libft.a .	
+	@$(CC) $(CFLAGS) $(LDFLAGS) $^ libft.a -o $@
+	@$(RM) *.dSYM
+	@echo "$(GREEN)make done$(RESET)"
 
-$(NAME): $(addprefix $(OBJ_DIR),$(OBJS))
-	$(MAKE) -C $(LIB_DIR)
-	$(CC) $(INCS) $^ -o $(NAME) $(LDFLAGS) -lreadline -L$(LIB_DIR) -lft
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< $(INCS) -o $@
-clean:
-	$(RM) $(OBJ_DIR)
-fclean: clean
-	$(RM) $(NAME)
-re: fclean all
+clean	:
+	@$(RM) $(OBJ) *.dSYM
+	@$(RM) .DS_Store */.DS_Store */*/.DS_Store */*/*/.DS_Store
+	@$(RM) *.o */*/o */*/*.o */*/*/*.o
+	@$(RM) srcs/libft/*.o srcs/libft/ft_printf/extra/*.o srcs/libft/ft_printf/srcs/*.o
+	@echo "$(RED)clean done$(RESET)"
+
+fclean	: clean
+	@$(RM) $(NAME)
+	@$(RM) libft.a
+	@echo "$(RED)fclean done$(RESET)"
+
+re		: fclean all
+
+.PHONY	: all clean fclean re
